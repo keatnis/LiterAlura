@@ -13,6 +13,7 @@ public class Autor {
     private Long id;
     private Integer anioNacimiento;
     private Integer anioFallecimiento;
+    @Column(unique = true)
     private String nombre;
 
     @OneToMany(mappedBy = "autor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -52,15 +53,6 @@ public class Autor {
         this.anioFallecimiento = anioFallecimiento;
     }
 
-    public List<Libro> getLibros() {
-
-        return libros;
-    }
-
-    public void setLibros(List<Libro> libros) {
-        libros.forEach(l-> l.setAutor(this));
-        this.libros = libros;
-    }
 
     public String getNombre() {
         return nombre;
@@ -70,13 +62,31 @@ public class Autor {
         this.nombre = nombre;
     }
 
+    public List<Libro> getLibros() {
+        return libros;
+    }
+
+    public void setLibros(List<Libro> libros) {
+        libros.forEach(l -> l.setAutor(this));
+        this.libros = libros;
+    }
+
     @Override
     public String toString() {
-        return "Autor{" +
-                "id=" + id +
-                ",nombre=" + nombre +
-                ", anioNacimiento=" + anioNacimiento +
-                ", anioFallecimiento=" + anioFallecimiento +
-                '}';
+        return " ---- Autor ---" +
+                "Autor: " + nombre + "\n" +
+                "Año de Nacimiento: " + anioNacimiento + "\n" +
+                "Año de Fallecimiento: " +anioFallecimiento + "\n" +
+                "Libros registrados:" + libros.stream().map(Libro::getTitulo);
+//        return
+//                "Autor{" +
+//                "id=" + id +
+//                ",nombre=" + nombre +
+//                ", anioNacimiento=" + anioNacimiento +
+//                ", anioFallecimiento=" + anioFallecimiento +
+//                ", Libros =" + libros.stream().map(l->l.getTitulo()).iterator().next() +
+//
+//                '}';
+
     }
 }

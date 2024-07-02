@@ -1,10 +1,8 @@
 package com.keatnis.LiterAlura.model;
 
-import com.keatnis.LiterAlura.dto.DatosLibro;
 import com.keatnis.LiterAlura.dto.LibroDTO;
 import jakarta.persistence.*;
-
-import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "libro")
@@ -13,19 +11,30 @@ public class Libro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true)
     private String titulo;
-    private List<String> lenguajes;
+//    @Enumerated(EnumType.STRING)
+//    private Lenguaje lenguaje;
+
+    private String lenguaje;
     private Integer numeroDescargas;
 
     @ManyToOne
-   private Autor autor;
+    private Autor autor;
+
 
     public Libro() {
     }
-    public Libro( LibroDTO d) {
+
+    public Libro(LibroDTO d) {
         this.numeroDescargas = d.numeroDescargas();
         this.titulo = d.titulo();
-        this.lenguajes = d.lenguajes();
+        Optional<String> lenguaje = d.lenguajes().stream().findFirst();
+        // this.lenguaje = Lenguaje.fromListString(lenguaje.get());
+        lenguaje.ifPresent(s -> this.lenguaje = s);
+
+
     }
 
     public Long getId() {
@@ -45,21 +54,19 @@ public class Libro {
     }
 
     public Autor getAutor() {
-
         return autor;
     }
 
     public void setAutor(Autor autor) {
-
         this.autor = autor;
     }
 
-    public List<String> getLenguajes() {
-        return lenguajes;
+    public String getLenguaje() {
+        return lenguaje;
     }
 
-    public void setLenguajes(List<String> lenguajes) {
-        this.lenguajes = lenguajes;
+    public void setLenguaje(String lenguaje) {
+        this.lenguaje = lenguaje;
     }
 
     public Integer getNumeroDescargas() {
@@ -72,13 +79,17 @@ public class Libro {
 
     @Override
     public String toString() {
-        return "Libro{" +
-                "id=" + id +
-                ", titulo='" + titulo + '\'' +
-                ", autores=" + autor +
-                ", lenguajes=" + lenguajes +
-                ", numeroDescargas=" + numeroDescargas +
-                '}';
+        return "            ---- Libro ---\n" +
+                "        Titulo: " + titulo + "\n" +
+                "        Autor:  " + autor + "\n" +
+                "        Idioma:" + lenguaje + "\n" +
+                "        Numero de decargas:" +numeroDescargas + "\n";
+//        return "Libro{" +
+//                "id=" + id +
+//                ", titulo='" + titulo + '\'' +
+//                ", lenguajes=" + lenguaje +
+//                ", numeroDescargas=" + numeroDescargas +
+//                '}';
     }
 
 

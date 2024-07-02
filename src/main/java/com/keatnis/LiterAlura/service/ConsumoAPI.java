@@ -19,8 +19,8 @@ public class ConsumoAPI {
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
+
         }
-        System.out.println(url +"\n"+response.body());
         return response.body();
     }
 }

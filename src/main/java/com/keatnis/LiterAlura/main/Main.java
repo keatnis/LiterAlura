@@ -9,22 +9,14 @@ import java.util.Scanner;
 public class Main {
     private Scanner scanner = new Scanner(System.in);
 
-    private LibroService service;
+    private LibroService appService;
 
     public Main(LibroService libroService) {
-        this.service = libroService;
+        this.appService = libroService;
     }
 
     public void menu() {
-       /*
-        * no se puede registar dos veces el mismo libro
-        Salida de opcion 1:
-        ---- Libro ---
-        Titulo: Pride and Prejuice
-        Autor: Austen, Jane
-        Idioma: en
-        Numero de decargas:
-         */
+
         String menu = """
                 --------------------------------
                 ***** CHALLENGE LITERATURA ***** 
@@ -48,31 +40,35 @@ public class Main {
                 opcion = scanner.nextInt();
                 scanner.nextLine();
             } catch (InputMismatchException e) {
-                System.out.println(e.getMessage());
                 System.out.println("Error: Introduza un numero.");
                 scanner.next();
                 continue;
             }
             switch (opcion) {
                 case 1:
-                    service.buscarYGuardarDB();
+                    if (appService.getLibroEncontrado() != null) {
+                        appService.buscarYGuardarDB();
+                    } else {
+                        continue;
+                    }
                     break;
                 case 2:
-                    service.mostrarLibrosRegistrados();
+                    appService.mostrarLibrosRegistrados();
                     break;
                 case 3:
-                    service.mostarAutoresRegistrados();
+                    appService.mostarAutoresRegistrados();
                     break;
                 case 4:
-                    service.listarAutorPorAnio();
+                    appService.listarAutorPorAnio();
+                    break;
+                case 5:
+                    appService.listarPorIdioma();
                     break;
                 case 0:
-                    System.out.println("Saliendo del program ...");
+                    System.out.println("Hasta la proxima, saliendo del programa ...");
                     break;
                 default:
                     System.out.println("Seleccione una opcion valida.");
-
-
             }
 
         }
