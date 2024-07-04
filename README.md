@@ -28,6 +28,10 @@ Al final notifica al usuario que se guardó la informacion del libro.
 
 ![image](https://github.com/keatnis/LiterAlura/assets/95552515/c3db1096-69ab-4433-8eca-f0541086c63f)
 
+🔴 Libro YA REGISTRADO. Cuando el libro que se busca ya ha sido registrado, se notifica al usuario.
+
+![image](https://github.com/keatnis/LiterAlura/assets/95552515/b4d85286-24ee-46c1-b573-e85f8535eab0)
+
 
 * `2. Listar libros registrados`
 
