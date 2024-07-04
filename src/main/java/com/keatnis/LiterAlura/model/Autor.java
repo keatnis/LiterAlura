@@ -3,6 +3,7 @@ package com.keatnis.LiterAlura.model;
 import com.keatnis.LiterAlura.dto.AutorDTO;
 import jakarta.persistence.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -71,13 +72,15 @@ public class Autor {
         this.libros = libros;
     }
 
+
     @Override
     public String toString() {
-        return " ---- Autor ---" +
-                "Autor: " + nombre + "\n" +
+        return "Autor: " + nombre + "\n" +
                 "Año de Nacimiento: " + anioNacimiento + "\n" +
-                "Año de Fallecimiento: " +anioFallecimiento + "\n" +
-                "Libros registrados:" + libros.stream().map(Libro::getTitulo);
+                "Año de Fallecimiento: " + anioFallecimiento + "\n" +
+                "Libros registrados:" + libros.stream()
+                .map(l -> l.getTitulo()).toList().toString() + "\n";
+
 //        return
 //                "Autor{" +
 //                "id=" + id +

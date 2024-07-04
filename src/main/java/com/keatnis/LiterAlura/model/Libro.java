@@ -2,6 +2,7 @@ package com.keatnis.LiterAlura.model;
 
 import com.keatnis.LiterAlura.dto.LibroDTO;
 import jakarta.persistence.*;
+
 import java.util.Optional;
 
 @Entity
@@ -33,7 +34,7 @@ public class Libro {
         Optional<String> lenguaje = d.lenguajes().stream().findFirst();
         // this.lenguaje = Lenguaje.fromListString(lenguaje.get());
         lenguaje.ifPresent(s -> this.lenguaje = s);
-
+        this.autor = new Autor(d.autores().get(0));
 
     }
 
@@ -79,11 +80,10 @@ public class Libro {
 
     @Override
     public String toString() {
-        return "            ---- Libro ---\n" +
-                "        Titulo: " + titulo + "\n" +
-                "        Autor:  " + autor + "\n" +
-                "        Idioma:" + lenguaje + "\n" +
-                "        Numero de decargas:" +numeroDescargas + "\n";
+        return "Titulo: " + titulo + "\n" +
+                "Autor:  " + autor.getNombre() + "\n" +
+                "Idioma: " + lenguaje + "\n" +
+                "Numero de decargas:" + numeroDescargas + "\n";
 //        return "Libro{" +
 //                "id=" + id +
 //                ", titulo='" + titulo + '\'' +

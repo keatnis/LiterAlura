@@ -19,7 +19,7 @@ public class LibroService {
     private ConversorDatos conversor = new ConversorDatos();
     private Scanner scanner = new Scanner(System.in);
     private final String URL_BASE = "https://gutendex.com/books/?";
-    private LibroDTO libroEncontrado;
+ //   private LibroDTO libroEncontrado;
     List<Libro> libros;
 
     @Autowired
@@ -30,66 +30,49 @@ public class LibroService {
     public LibroService() {
     }
 
-    public LibroDTO getLibroEncontrado() {
+    public void buscarLibroAPI() {
         System.out.println("Escriba el nombre del libro que desee buscar:");
         var titulo = scanner.nextLine();
 
-        var json = consumoAPI.obtenerDatos(URL_BASE + "search=" + titulo.replace(" ", "+"));
+        var json = consumoAPI.consultarAPI(URL_BASE + "search=" + titulo.replace(" ", "+"));
         var datos = conversor.obtenerDatos(json, DatosLibro.class);
         Optional<LibroDTO> libroEnc = datos.resultado().stream()
                 .filter(l -> l.titulo().toLowerCase().contains(titulo.toLowerCase()))
                 .findFirst();
-
         if (libroEnc.isPresent()) {
             System.out.println("Libro encontrado: " + libroEnc.get().titulo());
-            return libroEncontrado = libroEnc.get();
+            insertarLibro(libroEnc.get());
 
         } else {
-            System.out.println("No se encontro un libro con este nombre, busque de nuevo");
-            return null;
+            System.out.println("|* --- Mensaje: No se encontro un libro con este nombre, busque de nuevo");
+
 
         }
 
     }
 
-    public void buscarYGuardarDB() {
+    public void insertarLibro(LibroDTO libroEncontrado) {
         //verificamos si el libro no esta registrado
-
+        Libro libro = new Libro(libroEncontrado);
         Optional<Libro> libroExiste = libroRepository.findByTituloContainingIgnoreCase(libroEncontrado.titulo());
 
         if (libroExiste.isPresent()) {
-            System.out.println("** El libro ya se registro con el nombre : " + libroExiste.get().getTitulo());
+            System.out.println("|* --- Mensaje: El libro ya se registro con el nombre : " + libroExiste.get().getTitulo());
 
         } else {
-            Libro libro = new Libro(libroEncontrado);
-            Autor autor = verificarLibroTieneAutor(libroEncontrado);
             // verificamos si existe el autor en la base de datos
-            Optional<Autor> autorExiste = autorRepository.findByNombreContainingIgnoreCase(autor.getNombre());
+            Optional<Autor> autorExiste = autorRepository.findByNombreContainingIgnoreCase(libro.getAutor().getNombre());
             if (autorExiste.isPresent()) {
                 libro.setAutor(autorExiste.get());
                 libroRepository.save(libro);
-                System.out.println("Se registro el libro en la base de datos");
+                System.out.println("|* --- Mensaje: Se registro el libro en la base de datos");
             } else {
-                libros = new ArrayList<>();
-                libros.add(libro);
-                autor.setLibros(libros);
-                autorRepository.save(autor);
-                System.out.println("Se regitro el libro y el autor");
+                autorRepository.save(libro.getAutor());
+                libroRepository.save(libro);
+                System.out.println(" |* --- Mensaje: Se regitro el libro y el autor ---*|");
             }
         }
 
-    }
-
-    private Autor verificarLibroTieneAutor(LibroDTO libroEncontrado) {
-        //verificamos si el libro tiene un autor, en caso de que no se registra como desconocido
-        Autor autor;
-        if (libroEncontrado.autores().isEmpty()) {
-            autor = new Autor(new AutorDTO("Desconocido", null, null));
-        } else {
-            autor = new Autor(libroEncontrado.autores().get(0));
-        }
-
-        return autor;
     }
 
     public void mostrarLibrosRegistrados() {
@@ -110,75 +93,115 @@ public class LibroService {
             if (!autorsVivos.isEmpty()) {
                 autorsVivos.forEach(System.out::println);
             } else {
-                System.out.println("*** No se encontraron autores vivos en este año");
+                System.out.println(" |* --- Mensaje: No se encontraron autores vivos en este año");
             }
 
         } catch (InputMismatchException e) {
-            System.out.println("Error: Ingrese correctamente el año (4 digitos)");
+            System.out.println("\tError: Ingrese correctamente el año (4 digitos)");
         }
     }
 
     public void listarPorIdioma() {
         libros = new ArrayList<>();
         System.out.println("""
-                1. es - español
-                2. en - ingles
-                3. fr - frances
-                4. pt - portugues
-                Indique la opcion que desea buscar:""");
+                **********************************
+                Indique la opcion del idioma que desea buscar:
+                    1. es - español
+                    2. en - ingles
+                    3. fr - frances
+                    4. pt - portugues
+                 """);
 
         int option = -1;
-        while (option != 0) {
 
+
+        while (option != 0) {
             try {
                 option = scanner.nextInt();
                 scanner.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("Error: Introduza un numero.");
-                scanner.next();
-                continue;
-            }
-            switch (option) {
-                case 1:
-                    libros = libroRepository.findByLenguaje("es");
-                    break;
-                case 2:
-                    libros = libroRepository.findByLenguaje("en");
-                    break;
-                case 3:
-                    libros = libroRepository.findByLenguaje("fr");
-                    break;
-                case 4:
-                    libros = libroRepository.findByLenguaje("pt");
-                    break;
-                default:
-                    System.out.println("Opcion invalida");
-                    break;
-            }
-            if (!libros.isEmpty()) {
-                System.out.println("Total de libros encontrados del idioma: " + libros.get(0).getLenguaje());
-                System.out.println((long) libros.size());
-                System.out.println("Pulse 1 para mostar los libros encontrados o pulse numero tecla para salir:");
+                switch (option) {
+                    case 1:
+                        libros = libroRepository.findByLenguaje("es");
+                        break;
+                    case 2:
+                        libros = libroRepository.findByLenguaje("en");
+                        break;
+                    case 3:
+                        libros = libroRepository.findByLenguaje("fr");
+                        break;
+                    case 4:
+                        libros = libroRepository.findByLenguaje("pt");
+                        break;
+                    default:
+                        System.out.println("Opcion invalida");
+                        break;
+                }
 
-
-                try {
+                if (!libros.isEmpty()) {
+                    System.out.println("Total de libros encontrados en el idioma: " + libros.get(0).getLenguaje() + "\n");
+                    System.out.println((long) libros.size());
+                    System.out.println("Pulse 1 para mostar los libros encontrados o introduzca cualquier tecla para salir:");
                     var opcion = scanner.nextInt();
                     if (opcion == 1) {
                         libros.forEach(System.out::println);
-                        libros.clear();
-
+                        break;
                     }
-                } catch (InputMismatchException e) {
-                    System.out.println("Regresando al menu principal");
+
+                } else {
+                    System.out.println("No se encontraron libros con el idioma");
                     break;
                 }
-
-            } else {
-                System.out.println("No se encontraron libros con el idioma");
+            } catch (InputMismatchException e) {
+                System.out.println("\tError: Numero invalido. Vuleva a introducir el numero:");
+                scanner.nextLine();
+                continue;
             }
-
         }
     }
+    // Funcionalidades extras
 
+    public void generarEstadisticas() {
+        List<Libro> libros = libroRepository.findAll();
 
+        IntSummaryStatistics dst =
+                libros.stream().collect(Collectors.summarizingInt(Libro::getNumeroDescargas));
+        System.out.println("Estadisticas de los libros registrados");
+        System.out.println("Libro mas descargado: " + dst.getMax());
+        System.out.println("Libro menos descargado: " + dst.getMin());
+        System.out.println("Total de libros contabilizados: " + dst.getCount());
+    }
+
+    public void top10librosCosultaAPI() {
+        var json = consumoAPI.consultarAPI(URL_BASE);
+        var datos = conversor.obtenerDatos(json, DatosLibro.class);
+
+        System.out.println("Top 10 de Libros mas descargados de Project Gutenberg : \n");
+        datos.resultado().stream()
+                .sorted(Comparator.comparing(LibroDTO::numeroDescargas).reversed())
+                .limit(10)
+                .forEach(l -> System.out.println("Titulo: " + l.titulo() + "(" + l.lenguajes().get(0) + ") " +
+                        "\tAutor: " + l.autores().get(0).nombre() + "\tTotal de descargas:" + l.numeroDescargas()));
+
+    }
+
+    public void top10LibrosBaseDeDatos() {
+        System.out.println("Top 10 de Libros mas descargados registrados en la base de datos: \n");
+        List<Libro> topLibros = libroRepository.findTop10ByOrderByNumeroDescargasDesc();
+        topLibros.stream().sorted(Comparator.comparing(Libro::getNumeroDescargas).reversed())
+                .limit(10).forEach(System.out::println);
+    }
+
+    public void buscarAutorPorNombre() {
+        System.out.println("Ingrese el nombre del autor que desee buscar: ");
+        var nombre = scanner.nextLine();
+
+        List<Autor> autorBuscado = autorRepository.buscarAutorPorNombre(nombre);
+
+        if (!autorBuscado.isEmpty()) {
+            System.out.println("Autor/es encontrado/s en la base de datos: \n");
+            autorBuscado.forEach(System.out::println);
+        } else {
+            System.out.println(" |* --- Mensaje: Mensaje:Autor no Encontrado, busque de nuevo. ** ");
+        }
+    }
 }

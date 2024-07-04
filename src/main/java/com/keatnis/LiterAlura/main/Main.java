@@ -19,7 +19,7 @@ public class Main {
 
         String menu = """
                 --------------------------------
-                ***** CHALLENGE LITERATURA ***** 
+                ***** BIENVENIDO/A A LITERALURA ***** 
                 --------------------------------
                  
                 1- Buscar libro por titulo
@@ -27,7 +27,11 @@ public class Main {
                 3- Listar autores registrados
                 4- Listar autores vivos en un determinado año
                 5- Listar libros por idioma
-                0. salir            
+                6- Top 10 de libros mas decargados
+                7- Estadisticas de descargas
+                8- Buscar autor por nombre en la base de datos
+                0. salir    
+                        
                 Introduzca el numero de opcion:                 
                 """;
 
@@ -46,11 +50,7 @@ public class Main {
             }
             switch (opcion) {
                 case 1:
-                    if (appService.getLibroEncontrado() != null) {
-                        appService.buscarYGuardarDB();
-                    } else {
-                        continue;
-                    }
+                    appService.buscarLibroAPI();
                     break;
                 case 2:
                     appService.mostrarLibrosRegistrados();
@@ -64,6 +64,17 @@ public class Main {
                 case 5:
                     appService.listarPorIdioma();
                     break;
+                case 6:
+                    // appService.top10LibrosBaseDeDatos();
+                    appService.top10librosCosultaAPI();
+                    break;
+                case 7:
+                    appService.generarEstadisticas();
+                    break;
+                case 8:
+                    appService.buscarAutorPorNombre();
+                    break;
+
                 case 0:
                     System.out.println("Hasta la proxima, saliendo del programa ...");
                     break;

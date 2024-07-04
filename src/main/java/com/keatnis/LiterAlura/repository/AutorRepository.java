@@ -12,6 +12,9 @@ public interface AutorRepository extends JpaRepository<Autor,Long> {
     Optional<Autor> findByNombreContainingIgnoreCase(String nombre);
     @Query("SELECT a FROM Autor a WHERE a.anioNacimiento <= :fecha AND a.anioFallecimiento >= :fecha")
     List<Autor> listarAuroresVivos(Integer fecha);
+    @Query("SELECT a FROM Autor a WHERE a.nombre ILIKE %:nombreAutor%")
+    List<Autor> buscarAutorPorNombre(String nombreAutor);
+
  // derived queris para encontrar
 
 }
