@@ -1,5 +1,8 @@
 # LiterAlura : Catalogo de Libros
 
+## ⭐ Isignia
+![badge literalura](https://github.com/keatnis/LiterAlura/assets/95552515/ba9c3d6f-ac8a-4ad2-96c3-9e526d8716c6)
+
 ## Descripcion del proyecto
 Esta aplicacion es un catálogo de libros, realiza la solicitud de busqueda a la API https://gutendex.com.
 Además, permite guardar la busqueda, filtrar y mostrar los libros y autores de interés.
@@ -62,9 +65,10 @@ Es opción muestra los autores vivos en el año que el usuario ingrese en la con
 * `5. Listar libros por idioma`
 
 Esta opción muestra el total de libros dependiendo del idioma que seleccione el usuario.
-Al pulsar 1 se mostrara todos los libros encontrados con el idioma seleccionado.
+Al pulsar 1 se mostrara todos los libros encontrados con el idioma seleccionado, en caso de no querer listar los libros hay que pulsar 0 para regresar al menu principal.
 
-![image](https://github.com/keatnis/LiterAlura/assets/95552515/a4d44916-f624-42b9-82c1-ad830bc233bf)
+![image](https://github.com/keatnis/LiterAlura/assets/95552515/0dad8369-0a12-4598-8823-bbe4a3bc3ae9)
+
 
 
  🔴 Libros del idioma no encontrados.
