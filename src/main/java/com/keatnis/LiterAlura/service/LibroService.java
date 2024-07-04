@@ -58,7 +58,7 @@ public class LibroService {
         Optional<Libro> libroExiste = libroRepository.findByTituloContainingIgnoreCase(libroEncontrado.titulo());
 
         if (libroExiste.isPresent()) {
-            System.out.println("|* --- Mensaje: El libro ya se registro con el nombre : " + libroExiste.get().getTitulo());
+            System.out.println("|* --- Mensaje: El libro ya  esta registrado, no se puede registrar mas de una vez. " );
 
         } else {
             // verificamos si existe el autor en la base de datos
