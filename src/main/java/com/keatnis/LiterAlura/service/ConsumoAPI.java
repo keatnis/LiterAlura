@@ -18,8 +18,7 @@ public class ConsumoAPI {
             response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-
+            System.out.println(e);
         }
         return response.body();
     }

@@ -8,6 +8,7 @@ import com.keatnis.LiterAlura.model.Libro;
 import com.keatnis.LiterAlura.repository.AutorRepository;
 import com.keatnis.LiterAlura.repository.LibroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,7 +20,7 @@ public class LibroService {
     private ConversorDatos conversor = new ConversorDatos();
     private Scanner scanner = new Scanner(System.in);
     private final String URL_BASE = "https://gutendex.com/books/?";
- //   private LibroDTO libroEncontrado;
+    //   private LibroDTO libroEncontrado;
     List<Libro> libros;
 
     @Autowired
@@ -62,15 +63,22 @@ public class LibroService {
         } else {
             // verificamos si existe el autor en la base de datos
             Optional<Autor> autorExiste = autorRepository.findByNombreContainingIgnoreCase(libro.getAutor().getNombre());
-            if (autorExiste.isPresent()) {
-                libro.setAutor(autorExiste.get());
-                libroRepository.save(libro);
-                System.out.println("|* --- Mensaje: Se registro el libro en la base de datos");
-            } else {
-                autorRepository.save(libro.getAutor());
-                libroRepository.save(libro);
-                System.out.println(" |* --- Mensaje: Se regitro el libro y el autor ---*|");
+            try {
+                if (autorExiste.isPresent()) {
+                    libro.setAutor(autorExiste.get());
+                    libroRepository.save(libro);
+                    System.out.println("|* --- Mensaje: Se registro el libro en la base de datos");
+                } else {
+                    autorRepository.save(libro.getAutor());
+                    libroRepository.save(libro);
+                    System.out.println(" |* --- Mensaje: Se regitro el libro y el autor ---*|");
+                }
+            } catch (DataIntegrityViolationException e) {
+                System.out.println("** "+e.getMessage());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
+
         }
 
     }
@@ -194,12 +202,13 @@ public class LibroService {
     public void buscarAutorPorNombre() {
         System.out.println("Ingrese el nombre del autor que desee buscar: ");
         var nombre = scanner.nextLine();
+        scanner.next();
 
         List<Autor> autorBuscado = autorRepository.buscarAutorPorNombre(nombre);
-
         if (!autorBuscado.isEmpty()) {
             System.out.println("Autor/es encontrado/s en la base de datos: \n");
             autorBuscado.forEach(System.out::println);
+            return;
         } else {
             System.out.println(" |* --- Mensaje: Mensaje:Autor no Encontrado, busque de nuevo. ** ");
         }
